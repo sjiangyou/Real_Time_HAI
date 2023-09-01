@@ -1,1 +1,14 @@
 *.csv
+*.docx
+.DS_Store
+*.zip
+.RData
+.Rhistory
+**/.ipynb_checkpoints
+*.png
+*.RT-H5
+**/MODELS
+H5/
+**/bin
+**/include
+**/lib
