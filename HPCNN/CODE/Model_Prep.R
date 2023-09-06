@@ -3,6 +3,7 @@ options(scipen = 999)
 
 data <- read.csv("Land_Ocean_Futures.csv", header = TRUE)
 data <- data[, -1]
+data <- data[data$BASIN == 'ATL',]
 
 columns <- c('GIS_ID', 'DATE', 'STORM_NAME', 'STORM_ID', 'LAND_OCEAN','SHIPS_PER', 
              'SHIPS_POT', 'VMAX')
@@ -40,5 +41,5 @@ for (i in 1:nrow(data_structure)) {
   x_train_resample <- do.call(rbind, lapply(unique(x$Category), function(y) doresample(x,y, max(table(x$Category)))))
   assign(paste0(data_structure$time[i], "_train_resample"), x_train_resample)
   
-  write.csv(x_train_resample, file = paste0("IC_Data/", data_structure$time[i], '_train_resample.csv'))
+  write.csv(x_train_resample, file = paste0("IC_Data/ATL/", data_structure$time[i], '_train_resample.csv'))
 }
