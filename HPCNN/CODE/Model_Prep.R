@@ -1,3 +1,5 @@
+# The best use of this script is after running the Add_Future_Land_Ocean.ipynb script.
+
 setwd("~/Documents/Real_Time_HAI/HPCNN/IMERG/")
 options(scipen = 999)
 
