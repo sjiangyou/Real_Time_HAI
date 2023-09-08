@@ -10,8 +10,6 @@ pyvenv.cfg
 *.png
 *.RT-H5
 **/MODELS
-H5/
-IMERG_CSV/
 **/bin
 **/include
 **/lib
