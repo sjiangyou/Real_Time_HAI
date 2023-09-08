@@ -1,20 +1,32 @@
-# The best use of this script is after running the Add_Future_Land_Ocean.ipynb script.
+setwd("~/Documents/Real_Time_HAI/HRICNN")
+data <- read.csv("BRTK_2000to2019_IMERG_SHIPS-RII.csv")
+basin <-  ""
 
-setwd("~/Documents/Real_Time_HAI/HRICNN/")
-options(scipen = 999)
-
-data <- read.csv("Land_Ocean_Futures.csv", header = TRUE)
 data <- data[, -1]
-data <- data[data$BASIN == 'ATL',]
 
-columns <- c('GIS_ID', 'DATE', 'STORM_NAME', 'STORM_ID', 'LAND_OCEAN','SHIPS_PER', 
-             'SHIPS_POT', 'VMAX')
+data_24_R <- data[, grepl(pattern = "Avg24", colnames(data))]
+data_24_L <- data[, c(1,2,3,8,9,10,11,17,12,24,75,79,80)]
+data_24 <- cbind(data_24_L, data_24_R)
 
-data_structure <- data.frame(time=c("P06","P12","P18","P24"), 
-                             value=c("_2","_3","_4","_5"))
+for(i in 1:length(data_24$VMAX)){
+  if(data_24$VMAX_P24[i] == -999 || data_24$VMAX[i] == -999){
+    data_24$DVMAX_24[i] <- -999
+  }
+  else{
+    data_24$DVMAX_24[i] <- data_24$VMAX_P24[i] - data_24$VMAX[i]
+  }
+}
+
+data_24$DVMAX_24[data_24$DVMAX_24 == -999] <- NA
+# dvmax <- data_24[, c(2,36)]
+# dvmax <- dvmax[complete.cases(dvmax),]
+data_24 <- data_24[complete.cases(data_24),]
+
+data_24[data_24 == -999] <- NA
+data_24 <- data_24[complete.cases(data_24),]
 
 doresample <- function(d, c, n){
-  t <- d[d$Category == c, ]
+  t <- d[d$RI == c, ]
   if(nrow(t) < n){
     t2 <- t[sample(1:nrow(t), n-nrow(t), replace = T),]
     t <- rbind(t,t2)
@@ -22,26 +34,17 @@ doresample <- function(d, c, n){
   return(t)
 }
 
-# Predictions
+data_24$Category <- ifelse(data_24$VMAX <= 33, "TD", 
+                             ifelse(data_24$VMAX <= 63, "TS", 
+                                    ifelse(data_24$VMAX <= 95, "Min", "Maj")))
+data_24$RI <- ifelse(data_24$DVMAX_24 >= 30, 1, 0)
 
-for (i in 1:nrow(data_structure)) {
-  x <- data[,c(columns, paste0("VMAX_", data_structure$time[i]), grep(paste0("SHDC", data_structure$value[i]), names(data), value = T), paste0("LO", data_structure$time[i]))]
-  
-  x[x == -999] <- NA
-  x <- x[complete.cases(x), ]
-  names(x) <- gsub(data_structure$value[i], "", names(x))
-  names(x) <- gsub(data_structure$time[i], "FT", names(x))
-  x <- x[x$LOFT == 'Ocean', ]
-  x <- x[x$LAND_OCEAN == "Ocean", ]
-  x$IC <- x$VMAX_FT - x$VMAX
-  x$Category <- ifelse(x$VMAX <= 33, "TD", 
-                       ifelse(x$VMAX <= 63, "TS", 
-                              ifelse(x$VMAX <= 95, "Min", "Maj")))
-
-  assign(paste0(data_structure$time[i], "_train"), x)
-  
-  x_train_resample <- do.call(rbind, lapply(unique(x$Category), function(y) doresample(x,y, max(table(x$Category)))))
-  assign(paste0(data_structure$time[i], "_train_resample"), x_train_resample)
-  
-  write.csv(x_train_resample, file = paste0("IC_Data/ATL/", data_structure$time[i], '_train_resample.csv'))
+for(b in unique(data_24$BASIN)){
+  basindata <- data_24[data_24$BASIN == b,]
+  train_resample <- do.call(rbind, lapply(unique(basindata$RI), function(y) doresample(basindata,y, max(table(basindata$RI)))))
+  write.csv(train_resample, file = paste0("IMERG/Model_Data/", b, "_", 'train_resample.csv'))
 }
+
+data_24 <- do.call(rbind, lapply(unique(data_24$RI), function(y) doresample(data_24, y, max(table(data_24$RI)))))
+
+write.csv(data_24, file = "IMERG/Model_Data/RI_Data_Global.csv")
