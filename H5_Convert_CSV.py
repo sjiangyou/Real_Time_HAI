@@ -4,8 +4,11 @@ import numpy as np
 import pandas as pd
 import sys
 
-filename, gis_id, category, latitude, longitude = sys.argv[:5]
-date, time = filename[23:30], filename[32:34]
+filename, basin, ident, category, latitude, longitude = sys.argv[1:7]
+date, time = filename[23:31], filename[33:35]
+year = date[0:4]
+latitude, longitude = float(latitude), float(longitude)
+filename, basin, ident, category, date, time = str(filename), str(basin), str(ident), str(category), str(date), str(time)
 
 os.chdir('H5')
 f = h5py.File(filename, 'r')
@@ -27,4 +30,4 @@ dataset = dataset[dataset['latitude (degrees_north)'] >= (latitude - 6.0)]
 
 image = dataset.pivot(index='latitude (degrees_north)', columns='longitude (degrees_east)', values='Precipitation (mm/hr)')
 image = image.T
-image.to_csv(f'{gis_id}_{category}_{date}{time}.csv', index=False, header = False)
+image.to_csv(f'{basin}_{year}{ident}_{category}_{date}{time}.csv', index=False, header = False)
