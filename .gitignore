@@ -2,6 +2,7 @@
 *.docx
 .DS_Store
 *.zip
+*.dat
 !BRTK_SHIPS_2000to2019_IMERG_OK_Request_2023_FINAL.csv.zip
 .RData
 .Rhistory
