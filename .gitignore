@@ -1,9 +1,9 @@
+*.txt
 *.csv
 *.docx
 .DS_Store
 *.zip
 *.dat
-!BRTK_SHIPS_2000to2019_IMERG_OK_Request_2023_FINAL.csv.zip
 .RData
 .Rhistory
 pyvenv.cfg
@@ -11,7 +11,13 @@ pyvenv.cfg
 *.png
 *.RT-H5
 **/MODELS
+**/OUTPUT
+**/IMERG
 **/bin
 **/include
 **/lib
 test.py
+**/share
+**/etc
+TC_Prediction_2.ipynb
+TC_Prediction_3.ipynb
