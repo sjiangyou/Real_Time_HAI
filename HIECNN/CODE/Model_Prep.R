@@ -1,4 +1,4 @@
-setwd('~/Documents/Global_TC_Estimation/CODE/IMERG_DATA/IMERG')
+setwd('~/Programs/Real_Time_HAI/')
 options(scipen = 999)
 trainend <- 2018000000
 
@@ -23,6 +23,9 @@ train$CAT <- ifelse(train$VMAX <= 33, "TD",
                       ifelse(train$VMAX <= 63, "TS", 
                             ifelse(train$VMAX <= 95, "Min", "Maj")))
 
+test$CAT <- ifelse(test$VMAX <= 33, "TD", 
+                      ifelse(test$VMAX <= 63, "TS", 
+                            ifelse(test$VMAX <= 95, "Min", "Maj")))
 
 train_resample <- do.call(rbind, lapply(unique(train$CAT), function(y) doresample(train,y, max(table(train$CAT)))))
 nrow(train_resample[train_resample$CAT == 'TD', ])
@@ -31,6 +34,6 @@ nrow(train_resample[train_resample$CAT == 'Min', ])
 nrow(train_resample[train_resample$CAT == 'Maj', ])
 
 
-write.csv(train, 'ALL_TRAIN_DATA.csv')
-write.csv(test, 'ALL_TEST_DATA.csv')
-write.csv(train_resample, 'ALL_TRAIN_DATA_RESAMPLE.csv')
+write.csv(train, 'HIECNN/IMERG/DEV/ALL_TRAIN_DATA.csv')
+write.csv(test, 'HIECNN/IMERG/DEV/ALL_TEST_DATA.csv')
+write.csv(train_resample, 'HIECNN/IMERG/DEV/ALL_TRAIN_DATA_RESAMPLE.csv')
