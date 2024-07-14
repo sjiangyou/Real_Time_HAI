@@ -25,7 +25,7 @@ train$CAT <- ifelse(train$VMAX <= 33, "TD",
 
 test$CAT <- ifelse(test$VMAX <= 33, "TD", 
                       ifelse(test$VMAX <= 63, "TS", 
-                            ifelse(test$VMAX <= 95, "Min", "Maj"))
+                            ifelse(test$VMAX <= 95, "Min", "Maj")))
 
 train_resample <- do.call(rbind, lapply(unique(train$CAT), function(y) doresample(train,y, max(table(train$CAT)))))
 nrow(train_resample[train_resample$CAT == 'TD', ])
