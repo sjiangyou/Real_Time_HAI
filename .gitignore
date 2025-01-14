@@ -23,3 +23,4 @@ test.py
 **/etc
 TC_Prediction_2.ipynb
 TC_Prediction_3.ipynb
+**/.mypy_cache
